@@ -22,6 +22,7 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
           check-latest: true
+          cache: false # core module is stdlib-only; no go.sum to cache
       - name: Verify gofmt
         run: |
           out=$(gofmt -l -s .)
@@ -53,6 +54,7 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: "1.24"
+          cache: false # core module is stdlib-only; no go.sum to cache
       - uses: golangci/golangci-lint-action@v7
         with:
           version: latest

@@ -346,6 +346,14 @@ errtest.Fingerprint(t, errA, errB) // assert two errors group together
 - [`docs/snippets.md`](./docs/snippets.md) — one-screen cheat sheet.
 - Per-integration guides under [`contrib/*/README.md`](./contrib).
 
+## Community
+
+- [Contributing guide](./CONTRIBUTING.md) — repo layout, local setup, the checks every change must pass, how to add an adapter.
+- [Code of Conduct](./CODE_OF_CONDUCT.md) — Contributor Covenant 2.1.
+- [Security policy](./SECURITY.md) — private vulnerability reporting; redaction guarantees are in scope.
+- [Changelog](./CHANGELOG.md) — what changed, per release.
+- [Open an issue](https://github.com/ubgo/errx/issues) · [Discussions](https://github.com/ubgo/errx/discussions)
+
 ## License
 
 Apache-2.0 — see [`LICENSE`](./LICENSE) and [`NOTICE`](./NOTICE). Part of the [`github.com/ubgo`](https://github.com/ubgo) ecosystem of small, focused, dependency-light Go libraries.

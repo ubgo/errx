@@ -1,0 +1,51 @@
+version: 2
+updates:
+  # GitHub Actions used by every workflow.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+
+  # Core module is stdlib-only (no go.sum) but track tool/test deps if any
+  # are ever added.
+  - package-ecosystem: gomod
+    directory: /
+    schedule:
+      interval: weekly
+
+  # Each contrib module is an independent module with its own go.mod.
+  - package-ecosystem: gomod
+    directory: /contrib/httpx
+    schedule:
+      interval: weekly
+  - package-ecosystem: gomod
+    directory: /contrib/grpc
+    schedule:
+      interval: weekly
+  - package-ecosystem: gomod
+    directory: /contrib/connect
+    schedule:
+      interval: weekly
+  - package-ecosystem: gomod
+    directory: /contrib/graphql
+    schedule:
+      interval: weekly
+  - package-ecosystem: gomod
+    directory: /contrib/sentry
+    schedule:
+      interval: weekly
+  - package-ecosystem: gomod
+    directory: /contrib/otel
+    schedule:
+      interval: weekly
+  - package-ecosystem: gomod
+    directory: /contrib/prometheus
+    schedule:
+      interval: weekly
+  - package-ecosystem: gomod
+    directory: /contrib/goerr
+    schedule:
+      interval: weekly
