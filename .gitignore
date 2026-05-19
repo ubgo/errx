@@ -1,0 +1,10 @@
+coverage.out
+*.test
+*.out
+.DS_Store
+/dist/
+
+# Local multi-module dev convenience only; CI builds each module
+# standalone via its own go.mod (ecosystem rule: no shared build).
+go.work
+go.work.sum

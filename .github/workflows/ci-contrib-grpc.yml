@@ -1,0 +1,29 @@
+name: CI contrib/grpc
+
+on:
+  push:
+    branches: [main]
+    paths: ["contrib/grpc/**", "*.go", "go.mod"]
+  pull_request:
+    paths: ["contrib/grpc/**", "*.go", "go.mod"]
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: contrib/grpc
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+      - run: |
+          out=$(gofmt -l -s .)
+          if [ -n "$out" ]; then echo "$out"; exit 1; fi
+      - run: go vet ./...
+      - run: go test ./... -race -count=1

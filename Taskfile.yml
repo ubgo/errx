@@ -1,0 +1,57 @@
+version: '3'
+
+tasks:
+  default:
+    desc: List tasks
+    cmds:
+      - task --list
+    silent: true
+
+  build:
+    desc: Compile every package
+    cmds:
+      - go build ./...
+
+  test:
+    desc: Run tests with the race detector
+    cmds:
+      - go test ./... -race -count=1
+
+  cover:
+    desc: Run tests and print coverage
+    cmds:
+      - go test ./... -cover
+
+  cover-html:
+    desc: Generate and open an HTML coverage report
+    cmds:
+      - go test ./... -coverprofile=coverage.out
+      - go tool cover -html=coverage.out
+
+  vet:
+    desc: Run go vet
+    cmds:
+      - go vet ./...
+
+  lint:
+    desc: Run golangci-lint (install if missing)
+    cmds:
+      - golangci-lint run ./...
+
+  fmt:
+    desc: Format all Go source
+    cmds:
+      - gofmt -w -s .
+
+  tidy:
+    desc: Tidy and verify go.mod
+    cmds:
+      - go mod tidy
+      - go mod verify
+
+  check:
+    desc: Full pre-commit gate (fmt + vet + test)
+    cmds:
+      - task: fmt
+      - task: vet
+      - task: test
