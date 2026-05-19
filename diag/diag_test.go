@@ -71,6 +71,46 @@ func TestNonErrxAndNoSource(t *testing.T) {
 	}
 }
 
+func TestSeverityWordsAndEdges(t *testing.T) {
+	cases := []struct {
+		sev  errx.Severity
+		word string
+	}{
+		{errx.SevWarn, "warning"},
+		{errx.SevInfo, "note"},
+		{errx.SevDebug, "note"},
+		{errx.SevFatal, "fatal"},
+		{errx.SevError, "error"},
+	}
+	for _, c := range cases {
+		e := errx.New("m").WithCode("C").WithSeverity(c.sev)
+		if !strings.Contains(diag.String(e), c.word+"[C]") {
+			t.Fatalf("severity %v should render %q: %s", c.sev, c.word, diag.String(e))
+		}
+		// narratable form too (capitalized).
+		nb := diag.String(e, diag.Options{Narratable: true})
+		if !strings.Contains(strings.ToLower(nb), c.word) {
+			t.Fatalf("narratable severity %v missing %q: %s", c.sev, c.word, nb)
+		}
+	}
+}
+
+func TestLabelOutOfRangeAndNoName(t *testing.T) {
+	// Label offset past end of source → locate returns out-of-range, the
+	// label is skipped, no panic. Empty source name → default placeholder.
+	e := errx.New("x").WithCode("C").
+		WithSource("", "one line").
+		WithLabel(999, 3, "way out there")
+	out := diag.String(e)
+	if !strings.Contains(out, "--> <source>") {
+		t.Fatalf("empty source name should use placeholder: %s", out)
+	}
+	nb := diag.String(e, diag.Options{Narratable: true})
+	if !strings.Contains(nb, "at source line") {
+		t.Fatalf("narratable empty name placeholder: %s", nb)
+	}
+}
+
 func mustContain(t *testing.T, s, sub string) {
 	t.Helper()
 	if !strings.Contains(s, sub) {

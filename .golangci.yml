@@ -3,18 +3,29 @@ version: "2"
 run:
   timeout: 5m
 
+# Default set is "standard" (govet, errcheck, staticcheck, ineffassign,
+# unused) plus the extras below. We deliberately do NOT enable errorlint:
+# this is an error-chain library — inspect.go/stack.go implement Unwrap
+# traversal via type switches on error, which is exactly the machinery
+# errorlint tells you to replace with errors.As. Its heuristic is a
+# false-positive generator here. revive's exported-comment rule is also
+# omitted: the grouped one-line accessors are self-documenting and 26
+# //nolint directives would be worse than the rule.
 linters:
   enable:
-    - errcheck
-    - govet
-    - staticcheck
-    - ineffassign
-    - unused
     - misspell
-    - revive
-    - gocritic
     - bodyclose
-    - errorlint
+    - gocritic
+  settings:
+    errcheck:
+      # Renderers/log helpers write to an io.Writer; ignoring the write
+      # error is conventional and intentional.
+      exclude-functions:
+        - fmt.Fprint
+        - fmt.Fprintf
+        - fmt.Fprintln
+        - io.WriteString
+        - (io.Writer).Write
 
 issues:
   max-issues-per-linter: 0

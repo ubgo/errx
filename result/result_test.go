@@ -60,6 +60,49 @@ func TestMapAndThenChaining(t *testing.T) {
 	}
 }
 
+func TestTryAndUnwrapOrElse(t *testing.T) {
+	ok := result.Try(func() (int, error) { return 7, nil })
+	if v, good := ok.Value(); !good || v != 7 {
+		t.Fatalf("Try ok = %v %v", v, good)
+	}
+	bad := result.Try(func() (int, error) { return 0, errors.New("boom") })
+	if bad.IsOk() {
+		t.Fatal("Try should capture the error")
+	}
+	if got := bad.UnwrapOrElse(func(err error) int {
+		if err == nil {
+			t.Fatal("UnwrapOrElse should receive the error")
+		}
+		return 42
+	}); got != 42 {
+		t.Fatalf("UnwrapOrElse = %d", got)
+	}
+	if result.Ok(5).UnwrapOrElse(func(error) int { return -1 }) != 5 {
+		t.Fatal("UnwrapOrElse on Ok should return the value")
+	}
+}
+
+func TestErrorBranchesPropagate(t *testing.T) {
+	e := result.Err[int](errors.New("orig"))
+
+	if v := result.Map(e, func(n int) int { return n * 2 }); v.IsOk() {
+		t.Fatal("Map must propagate error")
+	}
+	if v := result.AndThen(e, func(int) result.Result[int] { return result.Ok(1) }); v.IsOk() {
+		t.Fatal("AndThen must propagate error")
+	}
+	if v := result.Match(e, func(int) string { return "ok" }, func(error) string { return "err" }); v != "err" {
+		t.Fatalf("Match error branch = %q", v)
+	}
+	// MapErr / Recover no-op on Ok.
+	if result.Ok(3).MapErr(func(err error) error { return err }).UnwrapOr(0) != 3 {
+		t.Fatal("MapErr on Ok should be a no-op")
+	}
+	if result.Ok(3).Recover(func(error) int { return 9 }).UnwrapOr(0) != 3 {
+		t.Fatal("Recover on Ok should be a no-op")
+	}
+}
+
 func TestRecoverMapErrMatchCollect(t *testing.T) {
 	rec := result.Err[int](errors.New("x")).Recover(func(error) int { return 99 })
 	if rec.UnwrapOr(0) != 99 {

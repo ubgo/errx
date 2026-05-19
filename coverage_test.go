@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/ubgo/errx"
 )
@@ -228,6 +229,226 @@ func TestReturnTrace(t *testing.T) {
 	}
 	if s := fmt.Sprintf("%+v", errx.Get(err)); !strings.Contains(s, "trace:") {
 		t.Fatalf("%%+v should include the trace section:\n%s", s)
+	}
+}
+
+func TestAccessorsAndEdges(t *testing.T) {
+	cause := errors.New("root")
+	e := errx.Wrap(cause, "ctx").
+		WithCode("C").WithDomain("d").
+		WithHint("do x").WithOwner("team-a").
+		WithSeverity(errx.SevWarn).WithRetryable(5 * time.Second)
+
+	if e.Hint() != "do x" || e.Owner() != "team-a" {
+		t.Fatalf("hint/owner = %q %q", e.Hint(), e.Owner())
+	}
+	if !errors.Is(e.Cause(), cause) {
+		t.Fatal("Cause() should return the wrapped error")
+	}
+	if !e.Retryable() || e.RetryAfter() != 5*time.Second {
+		t.Fatalf("retryable=%v after=%v", e.Retryable(), e.RetryAfter())
+	}
+	if e.ClassOf() != errx.ClassExpected || e.SeverityOf() != errx.SevWarn {
+		t.Fatalf("class=%v sev=%v", e.ClassOf(), e.SeverityOf())
+	}
+	if e.SpanID() != "" || e.TraceID() != "" {
+		t.Fatal("trace/span empty by default")
+	}
+	_ = e.WithTrace("t", "s")
+	if e.TraceID() != "t" || e.SpanID() != "s" {
+		t.Fatalf("WithTrace not applied: %q %q", e.TraceID(), e.SpanID())
+	}
+
+	// As failure path (wrong target type).
+	if _, ok := errx.As[*specificErr](errx.New("x")); ok {
+		t.Fatal("As should fail for an unrelated type")
+	}
+	// Fingerprint of a non-errx error is empty.
+	if errx.Fingerprint(errors.New("plain")) != "" {
+		t.Fatal("Fingerprint(non-errx) must be empty")
+	}
+	// Snapshot of a non-errx error returns ok=false.
+	if _, ok := errx.Snapshot(context.Background(), errors.New("plain")); ok {
+		t.Fatal("Snapshot(non-errx) should be ok=false")
+	}
+	// Default %v / %s verbs (non-+v branch of Format).
+	if got := fmt.Sprintf("%v", e); got == "" {
+		t.Fatal("default value verb produced empty output")
+	}
+	if got := fmt.Sprintf("%s", e); got == "" {
+		t.Fatal("string verb produced empty output")
+	}
+	// Default verb branch via Format directly (avoids a vet printf flag).
+	var st fakeState
+	e.Format(&st, 'd')
+	if st.b.Len() == 0 {
+		t.Fatal("default verb branch should render")
+	}
+}
+
+// fakeState is a minimal fmt.State for exercising Format's default branch.
+type fakeState struct{ b strings.Builder }
+
+func (f *fakeState) Write(p []byte) (int, error) { return f.b.Write(p) }
+func (f *fakeState) Width() (int, bool)          { return 0, false }
+func (f *fakeState) Precision() (int, bool)      { return 0, false }
+func (f *fakeState) Flag(int) bool               { return false }
+
+type specificErr struct{}
+
+func (*specificErr) Error() string { return "specific" }
+
+func TestErrdeferJoinBranch(t *testing.T) {
+	// AppendSuppressed when *errp is a non-errx error → join.
+	primary := errors.New("primary")
+	extra := errors.New("extra")
+	err := primary
+	errx.AppendSuppressed(&err, extra)
+	if !errors.Is(err, primary) || !errors.Is(err, extra) {
+		t.Fatal("join branch should keep both matchable")
+	}
+	// nil guards.
+	errx.AppendSuppressed(nil, extra) // no panic
+	var n error
+	errx.AppendSuppressed(&n, nil) // no-op
+	if n != nil {
+		t.Fatal("AppendSuppressed(&nil, nil) must stay nil")
+	}
+	// CloseSuppressing with a nil closer is a no-op.
+	var e2 error
+	errx.CloseSuppressing(&e2, nil)
+	if e2 != nil {
+		t.Fatal("CloseSuppressing(nil closer) must be a no-op")
+	}
+}
+
+func TestInspectChainShapes(t *testing.T) {
+	// Code via multi-unwrap (Join), and HasCode/FindByCode parity.
+	j := errx.Join(errors.New("a"), errx.New("b").WithCode("DEEP"))
+	if errx.Code(j) != "DEEP" || !errx.HasCode(j, "DEEP") || errx.FindByCode(j, "DEEP") == nil {
+		t.Fatalf("multi-unwrap code lookup failed: %q", errx.Code(j))
+	}
+	// Opaque barrier hides a wrapped sentinel from errors.Is (it does NOT
+	// erase identity inherited onto the wrapper itself by Wrap — that is
+	// by design).
+	sentinel := errors.New("dep sentinel")
+	op := errx.Wrap(sentinel, "boundary").Opaque()
+	if errors.Is(op, sentinel) {
+		t.Fatal("Opaque must hide the wrapped cause from errors.Is")
+	}
+	// Code() method on a foreign error is honored.
+	if errx.Code(&specificCoded{}) != "FOREIGN" {
+		t.Fatalf("Code() method not honored: %q", errx.Code(&specificCoded{}))
+	}
+	if !errx.HasCode(errx.Wrap(&specificCoded{}, "w"), "FOREIGN") {
+		t.Fatal("HasCode should see a wrapped foreign Code()")
+	}
+}
+
+type specificCoded struct{}
+
+func (*specificCoded) Error() string { return "foreign" }
+func (*specificCoded) Code() string  { return "FOREIGN" }
+
+func TestSnapshotFullAndSingleUnwrapChain(t *testing.T) {
+	cause := errors.New("db down")
+	e := errx.Wrap(cause, "query").
+		WithDomain("d").WithCode("Q").
+		WithTrace("trace-1", "span-1").
+		Suppress(errors.New("close failed")).
+		With("secret", "x").WithSafe("q", "SELECT 1")
+
+	rep, ok := errx.Snapshot(context.Background(), e)
+	if !ok {
+		t.Fatal("Snapshot should succeed")
+	}
+	if rep.Cause != "query: db down" && rep.Cause != "db down" {
+		t.Fatalf("cause not captured: %q", rep.Cause)
+	}
+	if len(rep.Suppressed) != 1 || rep.TraceID != "trace-1" || rep.SpanID != "span-1" {
+		t.Fatalf("snapshot missing suppressed/trace: %+v", rep)
+	}
+	var sawRedacted, sawSafe bool
+	for _, f := range rep.Fields {
+		if f.Key == "secret" && f.Value == errx.RedactedMarker {
+			sawRedacted = true
+		}
+		if f.Key == "q" && f.Value == "SELECT 1" {
+			sawSafe = true
+		}
+	}
+	if !sawRedacted || !sawSafe {
+		t.Fatalf("redaction wrong in snapshot: %+v", rep.Fields)
+	}
+
+	// FindByCode / Code / HasCode through a single-Unwrap (fmt.Errorf) chain.
+	inner := errx.New("inner").WithCode("INNER")
+	chain := fmt.Errorf("layer: %w", inner)
+	if errx.Code(chain) != "INNER" || !errx.HasCode(chain, "INNER") || errx.FindByCode(chain, "INNER") == nil {
+		t.Fatalf("single-unwrap chain lookup failed: %q", errx.Code(chain))
+	}
+	// Outer errx with empty code, inner carries it.
+	outerNoCode := &wrapNoCode{inner: inner}
+	if errx.Code(outerNoCode) != "INNER" {
+		t.Fatalf("should skip empty-code layer: %q", errx.Code(outerNoCode))
+	}
+}
+
+type wrapNoCode struct{ inner error }
+
+func (w *wrapNoCode) Error() string { return "nocode: " + w.inner.Error() }
+func (w *wrapNoCode) Unwrap() error { return w.inner }
+
+func TestRemainingBranches(t *testing.T) {
+	// Error(): leaf (no cause), opaque (msg only), wrap with empty msg.
+	if errx.New("leaf only").Error() != "leaf only" {
+		t.Fatal("leaf Error()")
+	}
+	op := errx.Wrap(errors.New("hidden"), "shown").Opaque()
+	if op.Error() != "shown" {
+		t.Fatalf("opaque Error() should be msg only: %q", op.Error())
+	}
+	wEmpty := errx.Wrap(errors.New("root"), "")
+	if wEmpty.Error() != "root" {
+		t.Fatalf("empty-msg wrap Error() = %q", wEmpty.Error())
+	}
+
+	// Fields(): no fields → nil; with fields → copy.
+	if errx.New("x").Fields() != nil {
+		t.Fatal("no fields => nil")
+	}
+	withF := errx.New("x").WithSafe("k", 1)
+	fs := withF.Fields()
+	fs[0].Key = "mutated"
+	if withF.Fields()[0].Key != "k" {
+		t.Fatal("Fields must be a defensive copy")
+	}
+
+	// URL()/Remediation() with neither explicit nor registered → "".
+	bare := errx.New("x").WithCode("NO_DOCS_REGISTERED_XYZ")
+	if bare.URL() != "" || bare.Remediation() != "" {
+		t.Fatalf("expected empty url/remediation: %q %q", bare.URL(), bare.Remediation())
+	}
+	// nil-receiver URL/Remediation/Localized.
+	var ne *errx.Error
+	if ne.URL() != "" || ne.Remediation() != "" || ne.Localized("en", "fb") != "fb" {
+		t.Fatal("nil receiver should be safe")
+	}
+
+	// LogValue without retryable/trace/fields (minimal branch).
+	var buf strings.Builder
+	slog.New(slog.NewJSONHandler(&buf, nil)).Error("m", "err", errx.New("bare").WithCode("C"))
+	if !strings.Contains(buf.String(), `"code":"C"`) {
+		t.Fatalf("minimal LogValue: %s", buf.String())
+	}
+
+	// Code/HasCode: multi-unwrap branch that finds nothing then something.
+	none := errx.Join(errors.New("a"), errors.New("b"))
+	if errx.Code(none) != "" || errx.HasCode(none, "X") {
+		t.Fatal("multi-unwrap with no codes should yield nothing")
+	}
+	if errx.FindByCode(errors.New("plain"), "X") != nil {
+		t.Fatal("FindByCode on plain error")
 	}
 }
 

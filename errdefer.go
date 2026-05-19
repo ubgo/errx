@@ -38,13 +38,12 @@ func AppendSuppressed(errp *error, extra error) {
 	if errp == nil || extra == nil {
 		return
 	}
-	switch {
-	case *errp == nil:
+	if *errp == nil {
 		*errp = extra
-	default:
+	} else {
 		var e *Error
 		if errors.As(*errp, &e) {
-			e.Suppress(extra)
+			_ = e.Suppress(extra) // builder return; mutation is the effect
 		} else {
 			*errp = Join(*errp, extra)
 		}

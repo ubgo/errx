@@ -2,6 +2,7 @@ package errx_test
 
 import (
 	"encoding/json"
+	"errors"
 	"strings"
 	"testing"
 	"time"
@@ -92,6 +93,37 @@ func TestCodeMigrationOnDecode(t *testing.T) {
 	g2, _ := errx.Decode(b2)
 	if errx.Code(g2) != "STILL_FINE" {
 		t.Fatalf("unmigrated code changed: %q", errx.Code(g2))
+	}
+}
+
+func TestAccumulatorLenAndCodecEdges(t *testing.T) {
+	acc := errx.NewAccumulator()
+	if acc.Len() != 0 {
+		t.Fatal("empty accumulator Len should be 0")
+	}
+	acc.Add("a", errors.New("x"))
+	acc.AddErr(errors.New("y"))
+	acc.Add("nil", nil) // ignored
+	if acc.Len() != 2 {
+		t.Fatalf("Len = %d, want 2", acc.Len())
+	}
+
+	// Encode(nil) → "null"; MarshalJSON of an error with suppressed + cause.
+	b, err := errx.Encode(nil)
+	if err != nil || string(b) != "null" {
+		t.Fatalf("Encode(nil) = %q %v", b, err)
+	}
+	e := errx.Wrap(errors.New("root"), "ctx").
+		WithCode("C").WithRetryable(time.Second).
+		Suppress(errors.New("sup"))
+	raw, err := e.MarshalJSON()
+	if err != nil || !strings.Contains(string(raw), `"code":"C"`) ||
+		!strings.Contains(string(raw), `"suppressed"`) {
+		t.Fatalf("MarshalJSON missing fields: %s (%v)", raw, err)
+	}
+	got, err := errx.Decode(raw)
+	if err != nil || errx.Code(got) != "C" || !errx.IsRetryable(got) {
+		t.Fatalf("decode round trip: code=%q retry=%v err=%v", errx.Code(got), errx.IsRetryable(got), err)
 	}
 }
 

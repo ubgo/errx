@@ -17,9 +17,9 @@ var (
 // minted by an older one (and vice versa once both register the pair) —
 // the cross-version-skew tolerance cockroachdb/errors gets from
 // RegisterTypeMigration, here for the JSON wire form. Explicit, no init().
-func RegisterCodeMigration(old, new string) {
+func RegisterCodeMigration(oldCode, newCode string) {
 	migMu.Lock()
-	codeMig[old] = new
+	codeMig[oldCode] = newCode
 	migMu.Unlock()
 }
 

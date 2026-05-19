@@ -62,7 +62,7 @@ func ExampleAccumulate() {
 
 func ExampleNote() {
 	base := errx.New("upstream timeout").WithCode("TIMEOUT")
-	errx.Note(base, "attempt", 3) // no extra wrapper frame
+	_ = errx.Note(base, "attempt", 3) // no extra wrapper frame
 	for _, f := range base.Fields() {
 		fmt.Printf("%s=%v\n", f.Key, f.Value)
 	}
