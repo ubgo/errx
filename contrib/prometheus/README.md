@@ -1,6 +1,6 @@
 # errx/contrib/prometheus — error metrics for Go by stable identity
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/ubgo/errx/contrib/prometheus.svg)](https://pkg.go.dev/github.com/ubgo/errx/contrib/prometheus)
+[![Go Reference](https://pkg.go.dev/badge/github.com/ubgo/errx/contrib/prometheus.svg)](https://pkg.go.dev/github.com/ubgo/errx/contrib/prometheus) [![Go Report Card](https://goreportcard.com/badge/github.com/ubgo/errx/contrib/prometheus)](https://goreportcard.com/report/github.com/ubgo/errx/contrib/prometheus) [![CI](https://github.com/ubgo/errx/actions/workflows/ci-contrib-prometheus.yml/badge.svg)](https://github.com/ubgo/errx/actions/workflows/ci-contrib-prometheus.yml) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](../../LICENSE) ![Go](https://img.shields.io/badge/go-1.24%2B-00ADD8?logo=go) [![part of errx](https://img.shields.io/badge/part%20of-errx-6f42c1)](https://github.com/ubgo/errx)
 
 Increment a Prometheus **`errx_errors_total`** counter from [`errx`](https://github.com/ubgo/errx) errors, labelled by the stable identity — `code`, `domain`, `severity`, `class`. Labels come from the machine identity, **not** the variable message, so cardinality stays bounded and the counter groups the same way the fingerprint, Sentry and logs do.
 

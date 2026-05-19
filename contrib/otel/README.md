@@ -1,6 +1,6 @@
 # errx/contrib/otel — OpenTelemetry exception recording for Go
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/ubgo/errx/contrib/otel.svg)](https://pkg.go.dev/github.com/ubgo/errx/contrib/otel)
+[![Go Reference](https://pkg.go.dev/badge/github.com/ubgo/errx/contrib/otel.svg)](https://pkg.go.dev/github.com/ubgo/errx/contrib/otel) [![Go Report Card](https://goreportcard.com/badge/github.com/ubgo/errx/contrib/otel)](https://goreportcard.com/report/github.com/ubgo/errx/contrib/otel) [![CI](https://github.com/ubgo/errx/actions/workflows/ci-contrib-otel.yml/badge.svg)](https://github.com/ubgo/errx/actions/workflows/ci-contrib-otel.yml) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](../../LICENSE) ![Go](https://img.shields.io/badge/go-1.24%2B-00ADD8?logo=go) [![part of errx](https://img.shields.io/badge/part%20of-errx-6f42c1)](https://github.com/ubgo/errx)
 
 Bridge [`errx`](https://github.com/ubgo/errx) errors to [OpenTelemetry](https://opentelemetry.io): record the error as an **`exception` span event** using the official `exception.*` semantic conventions, set the span status to `Error`, and (via `Install()`) auto-attach the active **trace and span IDs** to every errx error. Near-universally missing from Go error libraries — here it is one line.
 

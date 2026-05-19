@@ -1,6 +1,6 @@
 # errx/contrib/connect — ConnectRPC errors for Go
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/ubgo/errx/contrib/connect.svg)](https://pkg.go.dev/github.com/ubgo/errx/contrib/connect)
+[![Go Reference](https://pkg.go.dev/badge/github.com/ubgo/errx/contrib/connect.svg)](https://pkg.go.dev/github.com/ubgo/errx/contrib/connect) [![Go Report Card](https://goreportcard.com/badge/github.com/ubgo/errx/contrib/connect)](https://goreportcard.com/report/github.com/ubgo/errx/contrib/connect) [![CI](https://github.com/ubgo/errx/actions/workflows/ci-contrib-connect.yml/badge.svg)](https://github.com/ubgo/errx/actions/workflows/ci-contrib-connect.yml) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](../../LICENSE) ![Go](https://img.shields.io/badge/go-1.24%2B-00ADD8?logo=go) [![part of errx](https://img.shields.io/badge/part%20of-errx-6f42c1)](https://github.com/ubgo/errx)
 
 Convert any [`errx`](https://github.com/ubgo/errx) error into a **`*connect.Error`** ([ConnectRPC](https://connectrpc.com)) with a canonical Connect code and a typed **`google.rpc.ErrorInfo`** detail carrying the stable `(reason, domain)` identity and safe metadata. Works across Connect's JSON, gRPC, and gRPC-Web protocols.
 

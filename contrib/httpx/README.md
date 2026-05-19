@@ -1,6 +1,6 @@
 # errx/contrib/httpx — RFC 9457 problem+json error responses for Go
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/ubgo/errx/contrib/httpx.svg)](https://pkg.go.dev/github.com/ubgo/errx/contrib/httpx)
+[![Go Reference](https://pkg.go.dev/badge/github.com/ubgo/errx/contrib/httpx.svg)](https://pkg.go.dev/github.com/ubgo/errx/contrib/httpx) [![Go Report Card](https://goreportcard.com/badge/github.com/ubgo/errx/contrib/httpx)](https://goreportcard.com/report/github.com/ubgo/errx/contrib/httpx) [![CI](https://github.com/ubgo/errx/actions/workflows/ci-contrib-httpx.yml/badge.svg)](https://github.com/ubgo/errx/actions/workflows/ci-contrib-httpx.yml) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](../../LICENSE) ![Go](https://img.shields.io/badge/go-1.24%2B-00ADD8?logo=go) [![part of errx](https://img.shields.io/badge/part%20of-errx-6f42c1)](https://github.com/ubgo/errx)
 
 Render any [`errx`](https://github.com/ubgo/errx) error as a standards-compliant **RFC 9457 / RFC 7807 `application/problem+json`** HTTP response — the JSON error body every modern Go API is converging on. Maps the error's stable `code` and class to the right HTTP status, exposes only the end-user-safe message, and **never leaks unsafe (unredacted) fields** to the client.
 

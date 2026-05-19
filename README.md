@@ -1,10 +1,6 @@
 # errx — the structured error library for Go
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/ubgo/errx.svg)](https://pkg.go.dev/github.com/ubgo/errx)
-[![Go Report Card](https://goreportcard.com/badge/github.com/ubgo/errx)](https://goreportcard.com/report/github.com/ubgo/errx)
-[![CI](https://github.com/ubgo/errx/actions/workflows/ci.yml/badge.svg)](https://github.com/ubgo/errx/actions/workflows/ci.yml)
-[![Go 1.24+](https://img.shields.io/badge/go-1.24%2B-00ADD8)](https://go.dev/dl/)
-[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](./LICENSE)
+[![Go Reference](https://pkg.go.dev/badge/github.com/ubgo/errx.svg)](https://pkg.go.dev/github.com/ubgo/errx) [![Go Report Card](https://goreportcard.com/badge/github.com/ubgo/errx)](https://goreportcard.com/report/github.com/ubgo/errx) [![CI](https://github.com/ubgo/errx/actions/workflows/ci.yml/badge.svg)](https://github.com/ubgo/errx/actions/workflows/ci.yml) [![codecov](https://img.shields.io/badge/coverage-94%25-brightgreen)](https://github.com/ubgo/errx/actions/workflows/ci.yml) [![tag](https://img.shields.io/github/v/tag/ubgo/errx?sort=semver&label=release)](https://github.com/ubgo/errx/tags) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](./LICENSE) ![Go](https://img.shields.io/badge/go-1.24%2B-00ADD8?logo=go) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](./CONTRIBUTING.md) [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-fe5196?logo=conventionalcommits)](https://www.conventionalcommits.org)
 
 **errx** is a complete, production-grade **error handling library for Go (Golang)**. One coherent error value carries a stable machine identity, a separate operator and end-user message, typed and redactable structured fields, retry and severity metadata, a lazily-captured stack plus a return-trace, suppressed errors, a deterministic fingerprint, and compiler-grade diagnostics — while staying a **drop-in over the standard library `errors.Is` / `errors.As` / `errors.Join`**.
 

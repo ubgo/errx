@@ -1,6 +1,6 @@
 # errx/contrib/sentry — Sentry error reporting for Go with stable grouping
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/ubgo/errx/contrib/sentry.svg)](https://pkg.go.dev/github.com/ubgo/errx/contrib/sentry)
+[![Go Reference](https://pkg.go.dev/badge/github.com/ubgo/errx/contrib/sentry.svg)](https://pkg.go.dev/github.com/ubgo/errx/contrib/sentry) [![Go Report Card](https://goreportcard.com/badge/github.com/ubgo/errx/contrib/sentry)](https://goreportcard.com/report/github.com/ubgo/errx/contrib/sentry) [![CI](https://github.com/ubgo/errx/actions/workflows/ci-contrib-sentry.yml/badge.svg)](https://github.com/ubgo/errx/actions/workflows/ci-contrib-sentry.yml) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](../../LICENSE) ![Go](https://img.shields.io/badge/go-1.24%2B-00ADD8?logo=go) [![part of errx](https://img.shields.io/badge/part%20of-errx-6f42c1)](https://github.com/ubgo/errx)
 
 Report [`errx`](https://github.com/ubgo/errx) errors to [Sentry](https://sentry.io) with the **core deterministic fingerprint as the Sentry grouping key** — so the same logical bug groups identically in Sentry, Prometheus, logs and on the wire, instead of relying on Sentry's server-side guessing. Severity → level, `code`/`domain` → tags, safe fields → context, `mechanism.handled = true`, oldest-first stack frames.
 

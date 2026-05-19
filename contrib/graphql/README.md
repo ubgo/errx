@@ -1,6 +1,6 @@
 # errx/contrib/graphql — gqlgen error presenter for Go
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/ubgo/errx/contrib/graphql.svg)](https://pkg.go.dev/github.com/ubgo/errx/contrib/graphql)
+[![Go Reference](https://pkg.go.dev/badge/github.com/ubgo/errx/contrib/graphql.svg)](https://pkg.go.dev/github.com/ubgo/errx/contrib/graphql) [![Go Report Card](https://goreportcard.com/badge/github.com/ubgo/errx/contrib/graphql)](https://goreportcard.com/report/github.com/ubgo/errx/contrib/graphql) [![CI](https://github.com/ubgo/errx/actions/workflows/ci-contrib-graphql.yml/badge.svg)](https://github.com/ubgo/errx/actions/workflows/ci-contrib-graphql.yml) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](../../LICENSE) ![Go](https://img.shields.io/badge/go-1.24%2B-00ADD8?logo=go) [![part of errx](https://img.shields.io/badge/part%20of-errx-6f42c1)](https://github.com/ubgo/errx)
 
 Render any [`errx`](https://github.com/ubgo/errx) error as a **GraphQL error** for [gqlgen](https://gqlgen.com): the end-user-safe message becomes `message`, the stable identity and safe fields go under `extensions` (conventional `extensions.code`), and internal detail is never exposed.
 

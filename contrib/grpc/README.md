@@ -1,6 +1,6 @@
 # errx/contrib/grpc — google.rpc.Status + error details for Go gRPC
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/ubgo/errx/contrib/grpc.svg)](https://pkg.go.dev/github.com/ubgo/errx/contrib/grpc)
+[![Go Reference](https://pkg.go.dev/badge/github.com/ubgo/errx/contrib/grpc.svg)](https://pkg.go.dev/github.com/ubgo/errx/contrib/grpc) [![Go Report Card](https://goreportcard.com/badge/github.com/ubgo/errx/contrib/grpc)](https://goreportcard.com/report/github.com/ubgo/errx/contrib/grpc) [![CI](https://github.com/ubgo/errx/actions/workflows/ci-contrib-grpc.yml/badge.svg)](https://github.com/ubgo/errx/actions/workflows/ci-contrib-grpc.yml) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](../../LICENSE) ![Go](https://img.shields.io/badge/go-1.24%2B-00ADD8?logo=go) [![part of errx](https://img.shields.io/badge/part%20of-errx-6f42c1)](https://github.com/ubgo/errx)
 
 Map any [`errx`](https://github.com/ubgo/errx) error to a canonical **gRPC `status.Status`** with **typed `google.rpc` error details** — `ErrorInfo` (the stable `(reason, domain)` identity), `RetryInfo`, `LocalizedMessage`, and `Help`. The end-user-safe message becomes the status message; unredacted fields never cross the wire.
 

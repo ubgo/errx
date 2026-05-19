@@ -1,6 +1,6 @@
 # errx/contrib/goerr — migrate from github.com/ubgo/goerr to errx
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/ubgo/errx/contrib/goerr.svg)](https://pkg.go.dev/github.com/ubgo/errx/contrib/goerr)
+[![Go Reference](https://pkg.go.dev/badge/github.com/ubgo/errx/contrib/goerr.svg)](https://pkg.go.dev/github.com/ubgo/errx/contrib/goerr) [![Go Report Card](https://goreportcard.com/badge/github.com/ubgo/errx/contrib/goerr)](https://goreportcard.com/report/github.com/ubgo/errx/contrib/goerr) [![CI](https://github.com/ubgo/errx/actions/workflows/ci-contrib-goerr.yml/badge.svg)](https://github.com/ubgo/errx/actions/workflows/ci-contrib-goerr.yml) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](../../LICENSE) ![Go](https://img.shields.io/badge/go-1.24%2B-00ADD8?logo=go) [![part of errx](https://img.shields.io/badge/part%20of-errx-6f42c1)](https://github.com/ubgo/errx)
 
 A **two-way migration bridge** between the thin, shipped [`github.com/ubgo/goerr`](https://github.com/ubgo/goerr) and the full [`github.com/ubgo/errx`](https://github.com/ubgo/errx). Adopt `errx` incrementally — package by package — without a big-bang rewrite and without breaking code still written against `goerr`.
 
