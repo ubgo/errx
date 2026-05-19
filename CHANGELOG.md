@@ -113,7 +113,11 @@ the public API may change between minor versions.
   only `fmt`. Ships a runnable, CI-tested example; CI fails if generated
   code is stale.
 - Runnable `Example_*` (pkg.go.dev docs + tests).
-- Core test coverage ~89%; `diag` ~83%; `result` ~78%.
+- Core test coverage ~94%; `errtest`/`result` 100%; every `contrib`
+  module ≥90% (`httpx`/`connect`/`graphql`/`prometheus` 100%, `goerr`
+  98%, `otel` 94%, `grpc` 92%, `sentry` 91%).
+- `contrib/otel` now requires **Go 1.25+** (tracks OpenTelemetry v1.43+);
+  its CI matrix uses Go 1.25. All other modules remain Go 1.24.
 - Per-contrib-module GitHub Actions CI (8 modules); `go.work` is
   local-dev only (git-ignored) so each module builds standalone
   (ecosystem rule #5).

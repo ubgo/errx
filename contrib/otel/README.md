@@ -23,7 +23,7 @@ An error in your logs that you can't jump from to the distributed trace is half-
 go get github.com/ubgo/errx/contrib/otel
 ```
 
-Pulls `go.opentelemetry.io/otel` + `.../otel/trace`.
+Pulls `go.opentelemetry.io/otel` + `.../otel/trace`. **Requires Go 1.25+** (the only contrib module that does — it tracks OpenTelemetry v1.43+, whose `go.mod` requires Go 1.25). The errx core and every other module stay on Go 1.24.
 
 ## Step by step
 
