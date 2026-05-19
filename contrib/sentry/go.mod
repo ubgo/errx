@@ -1,9 +1,9 @@
 module github.com/ubgo/errx/contrib/sentry
 
-go 1.24
+go 1.25.0
 
 require (
-	github.com/getsentry/sentry-go v0.31.1
+	github.com/getsentry/sentry-go v0.46.2
 	github.com/ubgo/errx v0.0.0
 )
 
