@@ -1,11 +1,15 @@
+# Manual only (owner's call, 2026-10-13: Actions minutes are a budget). To run automatically again, replace the on: block with:
+#   on:
+#     push:
+#       branches: [main]
+#       paths: ["contrib/otel/**", "*.go", "go.mod"]
+#     pull_request:
+#       paths: ["contrib/otel/**", "*.go", "go.mod"]
+
 name: CI contrib/otel
 
 on:
-  push:
-    branches: [main]
-    paths: ["contrib/otel/**", "*.go", "go.mod"]
-  pull_request:
-    paths: ["contrib/otel/**", "*.go", "go.mod"]
+  workflow_dispatch:
 
 permissions:
   contents: read
